@@ -4,10 +4,14 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    # 每小时第 17 分钟自动同步一次评论
+    - cron: "17 * * * *"
 
 # 只在用户主页仓库里真正执行；在 fudao 仓库中静默跳过
 permissions:
   contents: read
+  discussions: read
   pages: write
   id-token: write
 
@@ -26,6 +30,10 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      - name: 拉取 Discussions 评论烘入页面
+        run: node scripts/fetch-comments.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:

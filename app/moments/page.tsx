@@ -1,9 +1,11 @@
 import Link from "next/link";
 import PostCard from "@/components/PostCard";
 import postsData from "@/data/posts.json";
-import type { Post } from "@/lib/types";
+import commentsJson from "@/data/comments.json";
+import type { Post, PostComment } from "@/lib/types";
 
 const posts = postsData as Post[];
+const commentsData = commentsJson as Record<string, PostComment[]>;
 
 export default function MomentsPage() {
   return (
@@ -17,7 +19,11 @@ export default function MomentsPage() {
       </header>
       <div className="space-y-6 [perspective:1200px]">
         {posts.map((p) => (
-          <PostCard key={p.id} post={p} />
+          <PostCard
+            key={p.id}
+            post={p}
+            comments={commentsData[String(p.discussion ?? "")]}
+          />
         ))}
       </div>
       <p className="mt-10 text-center text-sm text-moon/70">

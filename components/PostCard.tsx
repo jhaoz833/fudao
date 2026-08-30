@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "motion/react";
-import type { Post } from "@/lib/types";
+import type { Post, PostComment } from "@/lib/types";
 import {
   POST_ANIMATIONS,
   cardVariants,
@@ -11,7 +11,13 @@ import {
 } from "@/lib/animations";
 import Comments from "@/components/Comments";
 
-export default function PostCard({ post }: { post: Post }) {
+export default function PostCard({
+  post,
+  comments,
+}: {
+  post: Post;
+  comments?: PostComment[];
+}) {
   const anim = resolveAnimation(post.animation);
   const [liked, setLiked] = useState(false);
   const [open, setOpen] = useState(false);
@@ -117,11 +123,47 @@ export default function PostCard({ post }: { post: Post }) {
               className="flex items-center gap-1 transition-colors hover:text-aurora"
               aria-expanded={open}
             >
-              💬 {post.comments}
+              💬 {comments ? comments.length : post.comments}
             </button>
           </div>
         </div>
-        {open && <Comments term={post.id} />}
+        {open && (
+          <div className="mt-4 border-t border-white/10 pt-4">
+            <p className="mb-3 text-xs text-moon">
+              ✦ 评论{comments?.length ? ` · ${comments.length} 条` : ""}
+            </p>
+            {comments && comments.length > 0 ? (
+              <ul className="space-y-3">
+                {comments.map((c, i) => (
+                  <li key={i} className="flex gap-2.5">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    {c.avatar ? (
+                      <img
+                        src={c.avatar}
+                        alt=""
+                        className="h-7 w-7 shrink-0 rounded-full ring-1 ring-white/15"
+                      />
+                    ) : (
+                      <span className="h-7 w-7 shrink-0 rounded-full bg-aurora/20 ring-1 ring-aurora/30" />
+                    )}
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs text-moon">
+                        <span className="text-star/90">{c.login}</span> · {c.createdAt}
+                        {c.likes > 0 && <span className="ml-1.5">❤ {c.likes}</span>}
+                      </p>
+                      <p className="mt-0.5 whitespace-pre-wrap break-words text-sm leading-relaxed text-star/85">
+                        {c.body}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-xs text-moon/60">还没有评论，来抢沙发～</p>
+            )}
+            <Comments term={post.id} />
+          </div>
+        )}
       </div>
       </div>
     </motion.article>

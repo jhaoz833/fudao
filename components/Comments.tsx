@@ -36,20 +36,17 @@ export default function Comments({ term }: { term: string }) {
   if (!giscusReady()) return null;
 
   return (
-    <div className="mt-4 border-t border-white/10 pt-4">
-      <p className="mb-2 text-xs text-moon">
-        ✦ 评论区 · 用 GitHub 账号发言，表情可点赞
-      </p>
+    <div className="mt-3">
       <div ref={ref} />
       <p className="mt-2 text-xs text-moon/70">
-        评论区加载不出来？{" "}
+        上面没出现输入框？{" "}
         <a
           href={`https://github.com/${GISCUS.repo}/discussions`}
           target="_blank"
           rel="noreferrer"
           className="text-aurora underline-offset-2 hover:underline"
         >
-          去 GitHub Discussions 留言 →
+          去 GitHub Discussions 写评论 →
         </a>
       </p>
     </div>

@@ -8,6 +8,15 @@ export type Post = {
   animation: string;
   likes: number;
   comments: number;
+  discussion?: number;
+};
+
+export type PostComment = {
+  login: string;
+  avatar: string;
+  body: string;
+  createdAt: string;
+  likes: number;
 };
 
 export type Work = {
