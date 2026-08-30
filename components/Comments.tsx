@@ -5,7 +5,13 @@ import { GISCUS, giscusReady } from "@/lib/giscus";
 
 // 每条动态的评论区：基于 giscus，数据存在仓库的 GitHub Discussions 里。
 // term 用动态 id 作为稳定标识，与页面地址无关。
-export default function Comments({ term }: { term: string }) {
+export default function Comments({
+  term,
+  discussionUrl,
+}: {
+  term: string;
+  discussionUrl?: string;
+}) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -41,12 +47,12 @@ export default function Comments({ term }: { term: string }) {
       <p className="mt-2 text-xs text-moon/70">
         上面没出现输入框？{" "}
         <a
-          href={`https://github.com/${GISCUS.repo}/discussions`}
+          href={discussionUrl ?? `https://github.com/${GISCUS.repo}/discussions`}
           target="_blank"
           rel="noreferrer"
           className="text-aurora underline-offset-2 hover:underline"
         >
-          去 GitHub Discussions 写评论 →
+          去 GitHub 写评论 →
         </a>
       </p>
     </div>

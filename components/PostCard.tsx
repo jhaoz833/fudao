@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { motion } from "motion/react";
-import type { Post, PostComment } from "@/lib/types";
+import type { Post, PostThread } from "@/lib/types";
+import { GISCUS } from "@/lib/giscus";
 import {
   POST_ANIMATIONS,
   cardVariants,
@@ -13,10 +14,10 @@ import Comments from "@/components/Comments";
 
 export default function PostCard({
   post,
-  comments,
+  thread,
 }: {
   post: Post;
-  comments?: PostComment[];
+  thread?: PostThread;
 }) {
   const anim = resolveAnimation(post.animation);
   const [liked, setLiked] = useState(false);
@@ -123,7 +124,7 @@ export default function PostCard({
               className="flex items-center gap-1 transition-colors hover:text-aurora"
               aria-expanded={open}
             >
-              💬 {comments ? comments.length : post.comments}
+              💬 {thread ? thread.comments.length : post.comments}
             </button>
           </div>
         </div>
@@ -132,9 +133,9 @@ export default function PostCard({
             <p className="mb-3 text-xs text-moon">
               ✦ 评论{comments?.length ? ` · ${comments.length} 条` : ""}
             </p>
-            {comments && comments.length > 0 ? (
+            {thread && thread.comments.length > 0 ? (
               <ul className="space-y-3">
-                {comments.map((c, i) => (
+                {thread.comments.map((c, i) => (
                   <li key={i} className="flex gap-2.5">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     {c.avatar ? (
@@ -161,7 +162,14 @@ export default function PostCard({
             ) : (
               <p className="text-xs text-moon/60">还没有评论，来抢沙发～</p>
             )}
-            <Comments term={post.id} />
+            <Comments
+              term={post.id}
+              discussionUrl={
+                thread
+                  ? `https://github.com/${GISCUS.repo}/discussions/${thread.number}`
+                  : undefined
+              }
+            />
           </div>
         )}
       </div>

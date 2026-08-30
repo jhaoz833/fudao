@@ -7,11 +7,11 @@ import WorkCard from "@/components/WorkCard";
 import postsData from "@/data/posts.json";
 import worksData from "@/data/works.json";
 import commentsJson from "@/data/comments.json";
-import type { Post, PostComment, Work } from "@/lib/types";
+import type { Post, PostThread, Work } from "@/lib/types";
 
 const posts = (postsData as Post[]).slice(0, 3);
 const works = (worksData as Work[]).slice(0, 2);
-const commentsData = commentsJson as Record<string, PostComment[]>;
+const commentsData = commentsJson as Record<string, PostThread>;
 
 const grid = {
   hidden: {},
@@ -119,11 +119,7 @@ export default function HomePage() {
         </div>
         <div className="space-y-6 [perspective:1200px]">
           {posts.map((p) => (
-            <PostCard
-              key={p.id}
-              post={p}
-              comments={commentsData[String(p.discussion ?? "")]}
-            />
+            <PostCard key={p.id} post={p} thread={commentsData[p.id]} />
           ))}
         </div>
       </section>

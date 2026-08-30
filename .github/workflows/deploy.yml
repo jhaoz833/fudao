@@ -11,7 +11,7 @@ on:
 # 只在用户主页仓库里真正执行；在 fudao 仓库中静默跳过
 permissions:
   contents: read
-  discussions: read
+  discussions: write
   pages: write
   id-token: write
 
