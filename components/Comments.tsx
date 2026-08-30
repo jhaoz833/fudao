@@ -41,6 +41,17 @@ export default function Comments({ term }: { term: string }) {
         ✦ 评论区 · 用 GitHub 账号发言，表情可点赞
       </p>
       <div ref={ref} />
+      <p className="mt-2 text-xs text-moon/70">
+        评论区加载不出来？{" "}
+        <a
+          href={`https://github.com/${GISCUS.repo}/discussions`}
+          target="_blank"
+          rel="noreferrer"
+          className="text-aurora underline-offset-2 hover:underline"
+        >
+          去 GitHub Discussions 留言 →
+        </a>
+      </p>
     </div>
   );
 }
