@@ -131,7 +131,7 @@ export default function PostCard({
         {open && (
           <div className="mt-4 border-t border-white/10 pt-4">
             <p className="mb-3 text-xs text-moon">
-              ✦ 评论{comments?.length ? ` · ${comments.length} 条` : ""}
+              ✦ 评论{thread ? ` · ${thread.comments.length} 条` : ""}
             </p>
             {thread && thread.comments.length > 0 ? (
               <ul className="space-y-3">
