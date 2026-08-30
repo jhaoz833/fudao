@@ -1,0 +1,120 @@
+"use client";
+
+import { useState } from "react";
+import { motion } from "motion/react";
+import type { Post } from "@/lib/types";
+import {
+  POST_ANIMATIONS,
+  cardVariants,
+  resolveAnimation,
+  textCharVariants,
+} from "@/lib/animations";
+
+export default function PostCard({ post }: { post: Post }) {
+  const anim = resolveAnimation(post.animation);
+  const [liked, setLiked] = useState(false);
+  const likeCount = post.likes + (liked ? 1 : 0);
+
+  return (
+    <motion.article
+      variants={cardVariants[anim]}
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, margin: "-60px" }}
+    >
+      <div className="glass card-glow float-isle overflow-hidden rounded-2xl">
+      {post.images.length > 0 && (
+        <div className="relative">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={post.images[0]}
+            alt=""
+            className="h-52 w-full object-cover sm:h-64"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-mist/80 via-transparent to-transparent" />
+        </div>
+      )}
+
+      <div className="p-5">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-sm">
+            <span className="grid h-7 w-7 place-items-center rounded-full bg-aurora/20 text-xs text-aurora ring-1 ring-aurora/30">
+              ✦
+            </span>
+            <span className="text-star/90">{post.author}</span>
+            <span className="text-moon/70">· {post.createdAt}</span>
+          </div>
+          <span
+            className="shrink-0 rounded-full bg-white/5 px-2.5 py-1 text-[11px] text-moon ring-1 ring-white/10"
+            title="发布者选定的入场动画"
+          >
+            ✦ {POST_ANIMATIONS[anim].label}
+          </span>
+        </div>
+
+        {anim === "typewriter" ? (
+          <motion.p
+            className="mt-3 leading-relaxed text-star/90"
+            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.035 } } }}
+          >
+            {post.text.split("").map((ch, i) => (
+              <motion.span key={i} variants={textCharVariants} className="inline-block whitespace-pre">
+                {ch}
+              </motion.span>
+            ))}
+          </motion.p>
+        ) : (
+          <p className="mt-3 leading-relaxed text-star/90">{post.text}</p>
+        )}
+
+        <div className="mt-4 flex items-center justify-between">
+          <div className="flex flex-wrap gap-1.5">
+            {post.tags.map((t) => (
+              <span key={t} className="rounded-full bg-white/5 px-2.5 py-1 text-[11px] text-moon">
+                #{t}
+              </span>
+            ))}
+          </div>
+          <div className="flex items-center gap-4 text-sm text-moon">
+            <button
+              onClick={() => setLiked((v) => !v)}
+              className="relative flex items-center gap-1.5 transition-colors hover:text-gold"
+              aria-pressed={liked}
+              aria-label="点赞"
+            >
+              {liked && (
+                <span className="pointer-events-none absolute -top-2 left-1/2">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <motion.span
+                      key={i}
+                      className="absolute text-[10px] text-gold"
+                      initial={{ x: 0, y: 0, opacity: 1 }}
+                      animate={{
+                        x: Math.cos((i / 6) * Math.PI * 2) * 24,
+                        y: Math.sin((i / 6) * Math.PI * 2) * 24,
+                        opacity: 0,
+                      }}
+                      transition={{ duration: 0.7, ease: "easeOut" }}
+                    >
+                      ✦
+                    </motion.span>
+                  ))}
+                </span>
+              )}
+              <motion.span
+                animate={liked ? { scale: [1, 1.6, 1] } : { scale: 1 }}
+                transition={{ duration: 0.35 }}
+                className={liked ? "text-gold" : ""}
+              >
+                {liked ? "♥" : "♡"}
+              </motion.span>
+              {likeCount}
+            </button>
+            <span className="flex items-center gap-1">💬 {post.comments}</span>
+          </div>
+        </div>
+      </div>
+      </div>
+    </motion.article>
+  );
+}
