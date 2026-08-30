@@ -9,10 +9,12 @@ import {
   resolveAnimation,
   textCharVariants,
 } from "@/lib/animations";
+import Comments from "@/components/Comments";
 
 export default function PostCard({ post }: { post: Post }) {
   const anim = resolveAnimation(post.animation);
   const [liked, setLiked] = useState(false);
+  const [open, setOpen] = useState(false);
   const likeCount = post.likes + (liked ? 1 : 0);
 
   return (
@@ -110,9 +112,16 @@ export default function PostCard({ post }: { post: Post }) {
               </motion.span>
               {likeCount}
             </button>
-            <span className="flex items-center gap-1">💬 {post.comments}</span>
+            <button
+              onClick={() => setOpen((v) => !v)}
+              className="flex items-center gap-1 transition-colors hover:text-aurora"
+              aria-expanded={open}
+            >
+              💬 {post.comments}
+            </button>
           </div>
         </div>
+        {open && <Comments term={post.id} />}
       </div>
       </div>
     </motion.article>
