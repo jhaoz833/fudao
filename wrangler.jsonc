@@ -1,0 +1,8 @@
+{
+  // Cloudflare Workers 静态站配置：构建产物在 out/，由 Workers Assets 直接托管
+  "name": "fudao",
+  "compatibility_date": "2025-06-01",
+  "assets": {
+    "directory": "./out"
+  }
+}
