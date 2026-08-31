@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "motion/react";
 import PostCard from "@/components/PostCard";
 import WorkCard from "@/components/WorkCard";
+import IslandVideo from "@/components/IslandVideo";
 import postsData from "@/data/posts.json";
 import worksData from "@/data/works.json";
 import commentsJson from "@/data/comments.json";
@@ -106,33 +107,18 @@ export default function HomePage() {
 
       {/* 浮岛名片 */}
       <section className="mx-auto max-w-3xl px-5 pb-6 pt-14">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className="glass card-glow float-isle flex flex-col items-center gap-6 rounded-3xl p-6 sm:flex-row"
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/images/floating-island.svg"
-            alt="浮岛小插画"
-            className="h-36 w-36 shrink-0 animate-float-slow"
-          />
-          <div className="text-center sm:text-left">
-            <h2 className="text-lg font-semibold text-star">✦ 关于浮岛</h2>
-            <p className="mt-2 text-sm leading-relaxed text-moon">
-              一座漂浮在星海里的小岛。岛主把拍下的、画下的、想到的一切都存放在这里，
-              每一条动态落岛时都带着自己选定的入场动画。欢迎在评论区留下你的脚印，做这座岛的第一批岛民。
-            </p>
-            <Link
-              href="/about"
-              className="mt-3 inline-block text-sm text-aurora transition hover:brightness-110"
-            >
-              了解岛主 →
-            </Link>
-          </div>
-        </motion.div>
+        <div className="mb-6 flex items-end justify-between">
+          <h2 className="text-lg font-semibold text-star">✦ 关于浮岛</h2>
+          <Link href="/about" className="text-sm text-moon transition hover:text-aurora">
+            了解岛主 →
+          </Link>
+        </div>
+        <IslandVideo>
+          <p className="text-sm leading-relaxed text-moon">
+            一座漂浮在星海里的小岛。岛主把拍下的、画下的、想到的一切都存放在这里，
+            每一条动态落岛时都带着自己选定的入场动画。欢迎在评论区留下你的脚印，做这座岛的第一批岛民。
+          </p>
+        </IslandVideo>
       </section>
 
       {/* 最新动态 */}

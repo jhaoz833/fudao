@@ -116,10 +116,11 @@ def draw_sparkle(draw, x, y, s, color, alpha):
 
 # ---------------------------------------------------------------- 背景（预渲染）
 def build_base() -> Image.Image:
-    yy = np.linspace(0, 1, H, dtype=np.float32)[:, None]
+    yy = np.linspace(0, 1, H, dtype=np.float32)[:, None]  # (H,1)
     top = np.array([4, 5, 13], dtype=np.float32)
     bottom = np.array([11, 14, 36], dtype=np.float32)
-    img = top[None, None, :] * (1 - yy[:, :, None]) + bottom[None, None, :] * yy[:, :, None]
+    img = np.empty((H, W, 3), dtype=np.float32)
+    img[:] = top[None, None, :] * (1 - yy[:, :, None]) + bottom[None, None, :] * yy[:, :, None]
 
     xs = np.arange(W, dtype=np.float32)[None, :]
     ys = np.arange(H, dtype=np.float32)[:, None]
@@ -355,18 +356,19 @@ def text_layer(text, font, color, tracking=0, pad=60):
     img = Image.new("RGBA", (max(w, 2), max(h, 2)), (0, 0, 0, 0))
     d = ImageDraw.Draw(img)
     draw_tracked(d, w // 2, pad, text, font, color + (255,), tracking)
-    return img
+    return {"img": img, "color": color}
 
 def paste_glow_text(base, layer, cx, cy, alpha):
     if alpha <= 0.01:
         return
-    glow = layer.filter(ImageFilter.GaussianBlur(10))
+    img, color = layer["img"], layer["color"]
+    glow = img.filter(ImageFilter.GaussianBlur(10))
     a = glow.split()[3].point(lambda v: v * alpha)
-    tinted = Image.new("RGBA", glow.size, layer.getpixel((layer.width // 2, layer.height // 2))[:3] + (0,))
+    tinted = Image.new("RGBA", glow.size, color + (0,))
     tinted.putalpha(a)
     base.paste(tinted, (int(cx - glow.width / 2), int(cy - glow.height / 2)), a)
-    body = layer.copy()
-    body.putalpha(layer.split()[3].point(lambda v: v * alpha))
+    body = img.copy()
+    body.putalpha(img.split()[3].point(lambda v: v * alpha))
     base.paste(body, (int(cx - body.width / 2), int(cy - body.height / 2)), body.split()[3])
 
 TITLE = text_layer("浮岛", FONT_BOLD, INK, tracking=44)
@@ -380,7 +382,7 @@ CAPTIONS = [
      "t0": 7.8, "t1": 10.5},
 ]
 ENDING = text_layer("欢迎登陆浮岛", FONT_END, GOLD, tracking=16)
-WELCOME_SUB = text_layer("✦ 挑一座小岛，慢慢逛 ✦", FONT_CAPTION, MOON, tracking=4)
+WELCOME_SUB = text_layer("挑一座小岛，慢慢逛", FONT_CAPTION, MOON, tracking=4)
 
 # ---------------------------------------------------------------- 逐帧渲染
 def render(t: float) -> Image.Image:
@@ -504,8 +506,6 @@ def render(t: float) -> Image.Image:
     ea = seg_alpha(t, 10.8, 13.1, fade=0.6)
     if ea > 0:
         pulse = 0.85 + 0.15 * math.sin(t * 3.2)
-        paste_glow_text(img, ENDING, CX, 236, ea * pulse)
-        paste_glow_text(img, WELCOME_SUB, CX, 336, ea * 0.85)
         dd = ImageDraw.Draw(img, "RGBA")
         for k in range(10):
             ang = k * math.tau / 10 + 0.5
@@ -514,6 +514,8 @@ def render(t: float) -> Image.Image:
             by = 280 + math.sin(ang) * dist * 0.62
             draw_sparkle(dd, bx, by, 6 + (k % 3) * 3,
                          (GOLD, AURORA, INK)[k % 3], 190 * ea * (0.55 + 0.45 * math.sin(t * 3 + k)))
+        paste_glow_text(img, ENDING, CX, 236, ea * pulse)
+        paste_glow_text(img, WELCOME_SUB, CX, 336, ea * 0.85)
 
     # 首尾黑场（循环衔接）
     fade_in = 1 - smooth(t / 0.8)
