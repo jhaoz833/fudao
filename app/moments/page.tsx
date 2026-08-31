@@ -23,8 +23,7 @@ export default function MomentsPage() {
         ))}
       </div>
       <p className="mt-10 text-center text-sm text-moon/70">
-        评论与点赞将接入 GitHub Discussions（{" "}
-        <span className="text-moon/50">第 2 期</span> ）
+        评论与点赞已接入 GitHub Discussions（每小时自动同步到页面）
       </p>
       <div className="mt-6 text-center">
         <Link href="/" className="text-sm text-moon transition hover:text-aurora">
